@@ -1,13 +1,17 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import Ticket, RestorationTicketRequest
 from .forms import TicketCreateForm, TicketUserUpdateForm, TicketAdminUpdateForm
 from .exceptions import TicketNotActiveException
+
+
+""" DJANGO VIEWS """
 
 
 class LoginRequiredMixin(UserPassesTestMixin):
@@ -37,6 +41,20 @@ class TicketsMainView(LoginRequiredMixin, ListView):
             queryset = Ticket.objects.all()
         else:
             queryset = Ticket.objects.filter(ticket_user=self.request.user)
+        return queryset
+
+
+class TicketsToRestoreListView(LoginRequiredMixin, ListView):
+    model = RestorationTicketRequest
+    template_name = 'restore_tickets_view.html'
+    context_object_name = 'tickets_to_restore'
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            queryset = RestorationTicketRequest.objects.all()
+        else:
+            url = reverse('main_view')
+            return HttpResponseRedirect(url)
         return queryset
 
 
@@ -202,9 +220,10 @@ class TicketRestoreView(LoginRequiredMixin, View):
         ticket = self.get_object()
         if request.user == ticket.ticket_user:
             if ticket.status != 'DeclineToRestore':
-                raise Http404('You cannot restore orders not in the “DeclineToRestore” status.')
+                raise PermissionDenied('You cannot restore orders not in the “DeclineToRestore” status.')
         else:
-            raise Http404('You cannot restore requests that you are not the creator of.')
+            url = reverse('main_view')
+            return HttpResponseRedirect(url)
         return render(request, 'ticket_detail_view.html', {'pk': ticket.pk})
 
     def post(self, request, pk):
@@ -300,3 +319,29 @@ class TicketDeclineToRestoreView(LoginRequiredMixin, View):
             'form': form,
         }
         return render(request, self.template_name, context)
+
+
+class TicketAdminDeleteView(LoginRequiredMixin, DeleteView):
+    model = Ticket
+    template_name = 'ticket_admin_delete_view.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            url = reverse('main_view')
+            return HttpResponseRedirect(url)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, **kwargs):
+        ticket_id = self.kwargs.get('pk')
+        try:
+            ticket = self.model.objects.get(pk=ticket_id)
+        except Ticket.DoesNotExist:
+            raise Http404('The ticket you are trying to find does not exist.')
+
+        return render(request, self.template_name)
+
+    def get_success_url(self):
+        return reverse('main_view')
+
+
+""" DJANGO REST VIEWS """

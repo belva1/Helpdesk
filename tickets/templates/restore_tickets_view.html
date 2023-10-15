@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Restore Tickets
+{% endblock %}
+
+{% block content %}
+{% for ticket_to_restore in tickets_to_restore %}
+<a href="{% url 'ticket_detail_view' pk=ticket_to_restore.ticket.pk%}">{{ ticket_to_restore }}</a>
+{% endfor %}
+{% endblock %}

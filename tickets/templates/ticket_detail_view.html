@@ -44,6 +44,9 @@ Ticket Detail
 <a href="{% url 'ticket_decline_view' pk=ticket.id %}">Decline</a>
 {% endif %}
 
+{% if request.user.is_staff %}
+<a href="{% url 'ticket_admin_delete_view' pk=ticket.id %}">Delete</a>
+{% endif %}
 <p>{{ request.user }}</p>
 
 <p><a href="{% url 'comments_list_view' pk=ticket.id %}">Comments</a></p>

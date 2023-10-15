@@ -1,0 +1,2 @@
+class TicketNotInProcessException(Exception):
+    pass
