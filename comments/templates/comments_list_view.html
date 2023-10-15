@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Comments
+{% endblock %}
+
+{% block content %}
+<h1>Comments for "{{ ticket.topic }}"</h1>
+
+    <a href="{% url 'ticket_detail_view' ticket.pk %}">Back to Ticket</a>
+
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <p>{{ comment.text }}</p>
+            <p>Created by {{ comment.comment_user.username }} on {{ comment.created_date }}</p>
+            <hr>
+        </li>
+        {% empty %}
+        <p>No comments available.</p>
+        {% endfor %}
+    </ul>
+
+    <a href="#">Add a Comment</a>
+
+{% endblock %}

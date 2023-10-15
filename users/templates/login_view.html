@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<form id="add_form" method="POST">
+    {% csrf_token %}
+    {{ form.username }}
+    {{ form.password }}
+    {{ form.errors }}
+    <button form="add_form" type="submit" class="btn btn-outline-secondary mt-4">Log In</button>
+    <p>{{ request.user }}</p>
+</form>
+<a class="dropdown-item" href="{% url 'logout_view' %}">Log Out</a>
+{% endblock %}
+

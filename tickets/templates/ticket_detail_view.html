@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Ticket Detail
+{% endblock %}
+
+{% block content %}
+
+<p>{{ ticket }}</p>
+<p>{{ ticket.ticket_user }}</p>
+<p>{{ ticket.priority }}</p>
+<p>{{ ticket.description }}</p>
+<p>{{ ticket.status }}</p>
+
+{% if ticket.restore_request %}
+<p>Ticket is under consideration for approval/decline.</p>
+{% endif %}
+
+{% if ticket.status == 'DeclineToRestore' or ticket.status == 'InRestoration' %}
+<p>{{ ticket.decline_reason }}</p>
+{% endif %}
+
+{% if ticket.status == 'Rejected' %}
+<p>{{ ticket.reject_reason }}</p>
+{% endif %}
+
+{% if ticket.status == 'DeclineToRestore' and request.user ==  ticket.ticket_user %}
+<form method="post" action="{% url 'ticket_restore_view' pk=ticket.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Restore ticket</button>
+</form>
+{% endif %}
+
+{% if ticket.status == 'Active' and request.user == ticket.ticket_user %}
+<a href="{% url 'ticket_user_update_view' pk=ticket.id %}">Update ticket</a>
+{% endif %}
+
+{% if request.user.is_staff and ticket.status != 'Rejected' and ticket.status != 'Done' %}
+<a href="{% url 'ticket_admin_update_view' pk=ticket.id %}">Update ticket</a>
+{% endif %}
+
+{% if request.user.is_staff and ticket.status == 'InRestoration'%}
+<a href="{% url 'ticket_approve_view' pk=ticket.id %}">Approve</a>
+<a href="{% url 'ticket_decline_view' pk=ticket.id %}">Decline</a>
+{% endif %}
+
+<p>{{ request.user }}</p>
+
+<p><a href="{% url 'comments_list_view' pk=ticket.id %}">Comments</a></p>
+
+{% endblock %}

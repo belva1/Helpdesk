@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Main
+{% endblock %}
+
+{% block content %}
+{% for ticket in tickets %}
+<p><a href="{% url 'ticket_detail_view' pk=ticket.pk%}">{{ ticket }}</a></p>
+{% endfor %}
+{% endblock %}
