@@ -46,9 +46,12 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-DRF_APP = ['rest_framework']
+DRF_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
+]
 
-INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + DRF_APP
+INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + DRF_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,40 +85,6 @@ TEMPLATES = [
     },
 ]
 
-REST_FRAMEWORK = {
-
-    """
-    Defines a list of authentication classes that will be used to authenticate users.
-    """
-
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication',
-        'authentication.CustomTokenAuthentication',
-    ],
-
-    'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.SearchFilter'],
-
-    """
-    Only authenticated users will have access to views.
-    """
-
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-
-    """
-    DEFAULT_RENDERER_CLASSES' is a parameter that accepts a tuple of renderer classes to 
-    format API responses into different formats (such as JSON, XML, and others). The tuple 
-    is enclosed in parentheses because it can contain multiple elements.
-    """
-
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-
-}
 
 WSGI_APPLICATION = 'helpdesk.wsgi.application'
 
@@ -187,3 +156,36 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+
+    """
+    Defines a list of authentication classes that will be used to authenticate users.
+    """
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'users.authentication.HelpdeskTokenAuthentication'
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+
+    'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.SearchFilter'],
+
+    """
+    Only authenticated users will have access to views.
+    """
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+
+    """
+    DEFAULT_RENDERER_CLASSES' is a parameter that accepts a tuple of renderer classes to 
+    format API responses into different formats (such as JSON, XML, and others). The tuple 
+    is enclosed in parentheses because it can contain multiple elements.
+    """
+
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+
+}

@@ -3,7 +3,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
-from tickets.views import LoginRequiredMixin
+from tickets.django_views import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 
 from .exceptions import TicketNotInProcessException
@@ -98,3 +98,5 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('comments_list_view', kwargs={'pk': self.object.ticket.pk})
+
+

@@ -13,12 +13,3 @@ class LoginRequiredMixin(UserPassesTestMixin):
 
     def get_login_url(self):
         return reverse('login_view')
-
-
-# class AdminPermissionMixin(UserPassesTestMixin):
-#     def test_func(self):
-#         return self.request.user.is_staff
-#
-#     def get_login_url(self):
-#         return reverse('main_view')
-

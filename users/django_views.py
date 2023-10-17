@@ -1,3 +1,5 @@
+""" DJANGO VIEWS """
+
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -45,5 +47,3 @@ class LogoutView(View):
         url = reverse('login_view')
         logout(request)
         return HttpResponseRedirect(url)
-
-

@@ -20,15 +20,6 @@ Ticket Detail
 <p>{{ ticket.decline_reason }}</p>
 {% endif %}
 
-{% comment %}
-{% if ticket.status == 'Declined' and request.user ==  ticket.ticket_user %}
-<form method="post" action="{% url 'ticket_restore_view' pk=ticket.id %}">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Restore ticket</button>
-</form>
-{% endif %}
-{% endcomment %}
-
 {% if ticket.status == 'Declined' and request.user ==  ticket.ticket_user %}
 <a href="{% url 'ticket_restore_view' pk=ticket.id %}" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Restore ticket</a>
 {% endif %}
@@ -60,8 +51,8 @@ Ticket Detail
 
 <p>{{ request.user }}</p>
 
-{% comment %}
+
 <p><a href="{% url 'comments_list_view' pk=ticket.id %}">Comments</a></p>
-{% endcomment %}
+
 
 {% endblock %}
