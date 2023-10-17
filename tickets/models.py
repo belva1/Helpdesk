@@ -1,4 +1,4 @@
-from django.utils import timezone
+# from django.utils import timezone
 from django.db import models
 from users.models import UM
 
@@ -15,11 +15,8 @@ class Ticket(models.Model):
         ('Active', 'Active'),
         ('InProcess', 'InProcess'),
         ('InRestoration', 'InRestoration'),
-
-        ('DeclineToRestore', 'DeclineToRestore'),
-        ('ApproveRestore', 'ApproveRestore'),
-
-        ('Rejected', 'Rejected'),
+        ('Declined', 'Declined'),
+        ('Approved', 'Approved'),
         ('Done', 'Done'),
     ]
 
@@ -31,13 +28,11 @@ class Ticket(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
 
     """
-    When creating a request, decline_reason / reject_reason is a blank field.
-    When a request is declined / rejected, it need to provide a reason in the field.
-    Therefore, the field will only be required if the request is declined / rejected.
+    When creating a request, decline_reason is a blank field.
+    When a request is declined, it will need to provide a reason in the field.
+    Therefore, the field will only be required if the request is declined.
     """
-
     decline_reason = models.TextField(blank=True, null=False)
-    reject_reason = models.TextField(blank=True, null=False)
 
     """
     True -> request for restoration.

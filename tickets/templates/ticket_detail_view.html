@@ -16,39 +16,52 @@ Ticket Detail
 <p>Ticket is under consideration for approval/decline.</p>
 {% endif %}
 
-{% if ticket.status == 'DeclineToRestore' or ticket.status == 'InRestoration' %}
+{% if ticket.status == 'Declined' or ticket.status == 'InRestoration' %}
 <p>{{ ticket.decline_reason }}</p>
 {% endif %}
 
-{% if ticket.status == 'Rejected' %}
-<p>{{ ticket.reject_reason }}</p>
-{% endif %}
-
-{% if ticket.status == 'DeclineToRestore' and request.user ==  ticket.ticket_user %}
+{% comment %}
+{% if ticket.status == 'Declined' and request.user ==  ticket.ticket_user %}
 <form method="post" action="{% url 'ticket_restore_view' pk=ticket.id %}">
     {% csrf_token %}
     <button type="submit" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Restore ticket</button>
 </form>
 {% endif %}
+{% endcomment %}
+
+{% if ticket.status == 'Declined' and request.user ==  ticket.ticket_user %}
+<a href="{% url 'ticket_restore_view' pk=ticket.id %}" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Restore ticket</a>
+{% endif %}
+
 
 {% if ticket.status == 'Active' and request.user == ticket.ticket_user %}
 <a href="{% url 'ticket_user_update_view' pk=ticket.id %}">Update ticket</a>
 {% endif %}
 
-{% if request.user.is_staff and ticket.status != 'Rejected' and ticket.status != 'Done' %}
-<a href="{% url 'ticket_admin_update_view' pk=ticket.id %}">Update ticket</a>
-{% endif %}
 
-{% if request.user.is_staff and ticket.status == 'InRestoration'%}
+{% if request.user.is_staff and ticket.status == 'InRestoration' or ticket.status == 'Active' and  request.user.is_staff %}
 <a href="{% url 'ticket_approve_view' pk=ticket.id %}">Approve</a>
 <a href="{% url 'ticket_decline_view' pk=ticket.id %}">Decline</a>
 {% endif %}
 
+{% if request.user.is_staff and ticket.status == 'Approved' %}
+<a href="{% url 'ticket_in_process_view' pk=ticket.id %}">Move to InProcess</a>
+{% endif %}
+
+{% if request.user.is_staff and ticket.status == 'InProcess' %}
+<a href="{% url 'ticket_done_view' pk=ticket.id %}">Move to Done</a>
+{% endif %}
+
+{% comment %}
 {% if request.user.is_staff %}
 <a href="{% url 'ticket_admin_delete_view' pk=ticket.id %}">Delete</a>
 {% endif %}
+{% endcomment %}
+
 <p>{{ request.user }}</p>
 
+{% comment %}
 <p><a href="{% url 'comments_list_view' pk=ticket.id %}">Comments</a></p>
+{% endcomment %}
 
 {% endblock %}

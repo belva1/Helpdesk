@@ -3,6 +3,8 @@ from .models import Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    comment_user = serializers.CharField(read_only=True)
+
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ['comment_user', 'text']

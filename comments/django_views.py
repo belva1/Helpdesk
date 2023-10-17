@@ -1,21 +1,15 @@
+""" DJANGO VIEWS """
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from tickets.views import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView
 
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
-from .serializers import CommentSerializer
-# from tickets.serializers import TicketSerializer
-
 from .exceptions import TicketNotInProcessException
 from .forms import CommentCreateForm, CommentUpdateForm
 from .models import Comment
 from tickets.models import Ticket
-
-
-""" DJANGO VIEWS """
 
 
 class CommentsListView(LoginRequiredMixin, ListView):
@@ -104,72 +98,3 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('comments_list_view', kwargs={'pk': self.object.ticket.pk})
-
-
-""" DJANGO REST VIEWS """
-
-
-class CommentsListViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def list(self, request, *args, **kwargs):
-        ticket_id = kwargs.get('pk')
-        ticket = Ticket.objects.get(pk=ticket_id)
-
-        if not request.user.is_staff and ticket.ticket_user != request.user:
-            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-
-        comments = Comment.objects.filter(ticket=ticket).order_by('-created_date')
-        serializer = self.get_serializer(comments, many=True)
-        return Response(serializer.data)
-
-
-class CommentCreateViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def create(self, request, *args, **kwargs):
-        ticket_id = kwargs.get('pk')
-        ticket = Ticket.objects.get(pk=ticket_id)
-
-        if ticket.status != 'InProcess':
-            return Response({'detail': 'You cannot add comments to a request that is not in "InProcess" status.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        user = request.user
-        if not user.is_staff and user != ticket.ticket_user:
-            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(ticket=ticket, comment_user=user)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class CommentUpdateViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        comment = super().get_object()
-        if comment.comment_user == self.request.user:
-            return comment
-        else:
-            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-
-
-class CommentDeleteViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        comment = super().get_object()
-        if comment.comment_user == self.request.user:
-            return comment
-        else:
-            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
