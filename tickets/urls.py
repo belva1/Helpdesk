@@ -1,7 +1,18 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
+
 from .django_views import *
 from .django_rest_views import *
 from comments.django_views import CommentsListView
+
+router = routers.SimpleRouter()
+router.register('rest', TicketViewSet)
+
+
+django_rest_urlpatterns = [
+    path('', include(router.urls))
+]
+# <int:pk>/
 
 django_urlpatterns = [
     path('main/', TicketsMainView.as_view(), name='main_view'),
@@ -20,10 +31,6 @@ django_urlpatterns = [
     # path('admin-delete-ticket/<str:pk>/', TicketAdminDeleteView.as_view(), name='ticket_admin_delete_view'),
 
     path('<int:pk>/', CommentsListView.as_view(), name='comments_list_view'),
-]
-
-django_rest_urlpatterns = [
-
 ]
 
 urlpatterns = django_urlpatterns + django_rest_urlpatterns

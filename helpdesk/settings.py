@@ -157,35 +157,19 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-
-    """
-    Defines a list of authentication classes that will be used to authenticate users.
-    """
-
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'users.authentication.HelpdeskTokenAuthentication'
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-
-    'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.SearchFilter'],
-
-    """
-    Only authenticated users will have access to views.
-    """
-
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-
-    """
-    DEFAULT_RENDERER_CLASSES' is a parameter that accepts a tuple of renderer classes to 
-    format API responses into different formats (such as JSON, XML, and others). The tuple 
-    is enclosed in parentheses because it can contain multiple elements.
-    """
-
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',
+#         # 'users.authentication.HelpdeskTokenAuthentication'
+#     ],
+#
+#     'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.SearchFilter'],
+#
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated',
+#     ],
+#
+#     'DEFAULT_RENDERER_CLASSES': (
+#         'rest_framework.renderers.JSONRenderer',
+#     ),
+# }

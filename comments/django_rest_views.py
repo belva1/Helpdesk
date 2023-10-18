@@ -3,7 +3,6 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from .serializers import CommentSerializer
-# from tickets.serializers import TicketSerializer
 from .models import Comment
 from tickets.models import Ticket
 
@@ -46,3 +45,22 @@ class CommentsViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(ticket=ticket, comment_user=user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        comment = self.get_object()
+        if request.user != comment.comment_user:
+            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def update(self, request, *args, **kwargs):
+        comment = self.get_object()
+        if request.user != comment.comment_user:
+            return Response({'detail': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(comment, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
