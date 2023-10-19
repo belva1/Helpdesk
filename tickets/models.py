@@ -1,4 +1,5 @@
 # from django.utils import timezone
+
 from django.db import models
 from users.models import UM
 
@@ -41,10 +42,3 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f'Topic - "{self.topic}"'
-
-
-class RestorationTicketRequest(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Restoration Request for {self.ticket.topic}."

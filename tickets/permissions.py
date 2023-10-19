@@ -2,11 +2,24 @@ from rest_framework import permissions
 
 
 class HelpdeskPermissions(permissions.BasePermission):
-    def has_permission(self, request, view):  # permission to the view access
+    def has_permission(self, request, view):
         return request.user.is_authenticated
 
-    def has_object_permission(self, request, view, obj):  # permission to the object access
-        # action from the view for the object
-        if view.action == 'destroy' or view.action == 'update' or view.action == 'partial_update':
-            return request.user == obj.ticket_user
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'destroy':
+            return request.user.is_staff
+
+        if view.action == 'partial_update':
+
+            if request.user.is_staff:
+                return False
+
+            if request.user == obj.ticket_user:
+                allowed_fields = ['priority', 'topic', 'description']
+                update_fields = request.data.keys()
+                for field in update_fields:
+                    if field not in allowed_fields:
+                        return False
+                return True
+
         return request.user.is_staff or request.user == obj.ticket_user

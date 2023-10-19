@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from .models import Ticket, RestorationTicketRequest
+from .models import Ticket
 from .forms import TicketCreateForm, TicketUserUpdateForm, TicketDeclineForm
 from .exceptions import IsNotActiveOrInRestorationTicketException, IsNotActiveTicketException, \
     IsNotDeclinedTicketException, IsNotCreatorOfTicketException, IsNotApprovedTicketException, \
@@ -16,6 +16,7 @@ from .exceptions import IsNotActiveOrInRestorationTicketException, IsNotActiveTi
 from .mixins import LoginRequiredMixin
 
 
+# MAIN, IN RESTORATION, DETAIL VIEWS
 class TicketsMainView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
     """
@@ -34,7 +35,7 @@ class TicketsMainView(LoginRequiredMixin, ListView):
 
 
 class TicketsInRestorationListView(LoginRequiredMixin, ListView):
-    model = RestorationTicketRequest
+    model = Ticket
     template_name = 'restore_tickets_view.html'
     context_object_name = 'tickets_to_restore'
 
@@ -43,7 +44,7 @@ class TicketsInRestorationListView(LoginRequiredMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = RestorationTicketRequest.objects.all()
+        queryset = Ticket.objects.filter(status='InRestoration')
         return queryset
 
 
@@ -79,6 +80,7 @@ class TicketDetailView(LoginRequiredMixin, DetailView):
         return super().get(*args, **kwargs)
 
 
+# CREATE VIEW
 class TicketCreateView(LoginRequiredMixin, CreateView):
     model = Ticket
     template_name = 'ticket_create_view.html'
@@ -101,6 +103,7 @@ class TicketCreateView(LoginRequiredMixin, CreateView):
         return render(request, self.template_name, {'form': form})
 
 
+# UPDATE VIEW
 class TicketUserUpdateView(LoginRequiredMixin, UpdateView):
     model = Ticket
     template_name = 'ticket_user_update_view.html'
@@ -128,7 +131,29 @@ class TicketUserUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('ticket_detail_view', kwargs={'pk': self.object.pk})
 
 
-# # RESTORE, APPROVE, DECLINE
+# DELETE VIEW
+class TicketAdminDeleteView(LoginRequiredMixin, DeleteView):
+    model = Ticket
+    template_name = 'ticket_admin_delete_view.html'
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, **kwargs):
+        ticket_id = self.kwargs.get('pk')
+        try:
+            ticket = self.model.objects.get(pk=ticket_id)
+        except Ticket.DoesNotExist:
+            raise Http404('The ticket you are trying to find does not exist.')
+
+        return render(request, self.template_name)
+
+    def get_success_url(self):
+        return reverse('main_view')
+
+
+# RESTORE, APPROVE, DECLINE
 class TicketRestoreView(LoginRequiredMixin, View):
     model = Ticket
 
@@ -138,7 +163,6 @@ class TicketRestoreView(LoginRequiredMixin, View):
             raise IsNotCreatorOfTicketException('You cannot restore request that you are not the creator of.')
 
         if ticket.status == 'Declined':
-            RestorationTicketRequest.objects.create(ticket=ticket)
             ticket.status = 'InRestoration'
             ticket.restore_request = True
             ticket.save()
@@ -193,6 +217,7 @@ class TicketApproveView(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse('ticket_detail_view', args=[pk]))
 
 
+# INPROCESS, DONE
 class TicketInProcessView(LoginRequiredMixin, View):
     model = Ticket
 

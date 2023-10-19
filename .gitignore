@@ -3,5 +3,5 @@
 /workspace.xml
 # Editor-based HTTP Client requests
 .idea/
-__pycache__/
+__pycache__
 venv/
