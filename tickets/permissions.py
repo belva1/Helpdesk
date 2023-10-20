@@ -15,7 +15,7 @@ class HelpdeskPermissions(permissions.BasePermission):
                 return False
 
             if request.user == obj.ticket_user:
-                allowed_fields = ['priority', 'topic', 'description']
+                allowed_fields = ['priority', 'description']
                 update_fields = request.data.keys()
                 for field in update_fields:
                     if field not in allowed_fields:

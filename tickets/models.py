@@ -33,7 +33,7 @@ class Ticket(models.Model):
     When a request is declined, it will need to provide a reason in the field.
     Therefore, the field will only be required if the request is declined.
     """
-    decline_reason = models.TextField(blank=True, null=False)
+    decline_reason = models.TextField(max_length=255, blank=True, null=False)
 
     """
     True -> request for restoration.

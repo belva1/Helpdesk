@@ -17,4 +17,5 @@ class HelpdeskPermissions(permissions.BasePermission):
 
         if view.action == 'destroy' or view.action == 'update' or view.action == 'partial_update':
             return request.user == obj.comment_user and obj.ticket.status == 'InProcess'
-        return request.user.is_staff and obj.ticket.status == 'InProcess' or request.user == obj.comment_user and obj.ticket.status == 'InProcess'
+
+        return True

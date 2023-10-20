@@ -7,7 +7,7 @@
         <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Create Comment</div>
 
         <div style="margin-bottom: 10px;">
-            {{ form.text }}
+            <textarea name="{{ form.text.name }}" placeholder="Please enter text" style="width: 100%; padding: 10px; border: none; border-radius: 5px;" cols="40" rows="5"></textarea>
         </div>
         <div style="margin-top: 25px;">
             <button type="submit" class="btn btn-secondary" style="margin-right: 18px;">Create</button>

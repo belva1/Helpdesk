@@ -17,12 +17,12 @@ django_rest_urlpatterns = [
     path('api/restore-ticket/<int:pk>/', ticket_restore_view, name='ticket_restore_api'),
     path('api/in-process-ticket/<int:pk>/', ticket_in_process_view, name='ticket_in_process_api'),
     path('api/done-ticket/<int:pk>/', ticket_done_view, name='ticket_done_api'),
-
 ]
 
 django_urlpatterns = [
     path('main/', TicketsMainView.as_view(), name='main_view'),
     path('restore-tickets/', TicketsInRestorationListView.as_view(), name='restore_tickets_view'),
+    path('active-tickets/', TicketsActiveListView.as_view(), name='active_tickets_view'),
     path('ticket/<int:pk>/', TicketDetailView.as_view(), name='ticket_detail_view'),
 
     path('create-ticket/', TicketCreateView.as_view(), name='ticket_create_view'),

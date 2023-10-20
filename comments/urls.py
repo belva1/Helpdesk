@@ -8,7 +8,7 @@ router.register('rest', CommentsViewSet)
 
 
 django_rest_urlpatterns = [
-    path('<int:pk>/', include(router.urls))
+    path('<int:id>/', include(router.urls))
 ]
 
 django_urlpatterns = [

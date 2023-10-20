@@ -40,7 +40,10 @@
 
             {% if request.user.is_staff %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'restore_tickets_view' %}">List of recovery requests</a>
+              <a class="nav-link" aria-current="page" href="{% url 'active_tickets_view' %}">List of "Active" requests</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'restore_tickets_view' %}">List of "InRestoration" requests</a>
             </li>
             {% else %}
             <li class="nav-item">

@@ -24,14 +24,14 @@ Update Request
     <div style="margin-bottom: 10px;">
         <select name="{{ form.priority.name }}" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
             <option value="" disabled selected>Select Priority</option>
-            <option value="High" {% if form.initial.priority == 'High' %}selected{% endif %}>High</option>
-            <option value="Medium" {% if form.initial.priority == 'Medium' %}selected{% endif %}>Medium</option>
             <option value="Low" {% if form.initial.priority == 'Low' %}selected{% endif %}>Low</option>
+            <option value="Medium" {% if form.initial.priority == 'Medium' %}selected{% endif %}>Medium</option>
+            <option value="High" {% if form.initial.priority == 'High' %}selected{% endif %}>High</option>
         </select>
     </div>
 
     <div style="margin-bottom: 10px;">
-        <input type="text" name="{{ form.description.name }}" value="{{ form.initial.description }}" placeholder="Description" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+        <textarea name="{{ form.description.name }}" placeholder="Description" style="width: 100%; padding: 10px; border: none; border-radius: 5px;" cols="40" rows="5">{{ form.initial.description }}</textarea>
     </div>
 
     <div style="color: white;">{{ form.errors }} </div>

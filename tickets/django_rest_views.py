@@ -72,7 +72,7 @@ def ticket_decline_view(request, pk):
             return Response({"message": "You don't have access to decline a request."}, status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes([HelpdeskPermissions])
 def ticket_approve_view(request, pk):
     try:
@@ -80,7 +80,7 @@ def ticket_approve_view(request, pk):
     except Ticket.DoesNotExist:
         return Response({"message": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'POST':
+    if request.method == 'GET':
         if request.user.is_staff:
             if ticket.status == 'InRestoration' or ticket.status == 'Active':
                 ticket.status = 'Approved'
@@ -95,7 +95,7 @@ def ticket_approve_view(request, pk):
             return Response({"message": "You don't have access to approve a request."}, status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes([HelpdeskPermissions])
 def ticket_restore_view(request, pk):
     try:
@@ -103,7 +103,7 @@ def ticket_restore_view(request, pk):
     except Ticket.DoesNotExist:
         return Response({"message": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'POST':
+    if request.method == 'GET':
         if request.user == ticket.ticket_user:
             if ticket.status == 'Declined':
                 ticket.status = 'InRestoration'
@@ -119,7 +119,7 @@ def ticket_restore_view(request, pk):
                             status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes([HelpdeskPermissions])
 def ticket_in_process_view(request, pk):
     try:
@@ -127,7 +127,7 @@ def ticket_in_process_view(request, pk):
     except Ticket.DoesNotExist:
         return Response({"message": "Ticket not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'POST':
+    if request.method == 'GET':
         if request.user.is_staff:
             if ticket.status == 'Approved':
                 ticket.status = 'InProcess'

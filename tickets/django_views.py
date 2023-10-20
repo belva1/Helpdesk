@@ -36,8 +36,8 @@ class TicketsMainView(LoginRequiredMixin, ListView):
 
 class TicketsInRestorationListView(LoginRequiredMixin, ListView):
     model = Ticket
-    template_name = 'restore_tickets_view.html'
-    context_object_name = 'tickets_to_restore'
+    template_name = 'index.html'
+    context_object_name = 'tickets'
 
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
@@ -45,6 +45,20 @@ class TicketsInRestorationListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Ticket.objects.filter(status='InRestoration')
+        return queryset
+
+
+class TicketsActiveListView(LoginRequiredMixin, ListView):
+    model = Ticket
+    template_name = 'index.html'
+    context_object_name = 'tickets'
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = Ticket.objects.filter(status='Active')
         return queryset
 
 

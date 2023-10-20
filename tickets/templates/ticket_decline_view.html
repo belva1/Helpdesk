@@ -10,7 +10,7 @@ Ticket Decline
         <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Decline</div>
         <form id="decline_form" method="POST" style="margin: 0 auto;">
             {% csrf_token %}
-            {{ form.decline_reason }}
+            <textarea name="{{ form.decline_reason.name }}" placeholder="Decline Reason" style="width: 100%; padding: 10px; border: none; border-radius: 5px;" cols="40" rows="5"></textarea>
             <div style="color: white;">{{ form.errors }}</div>
             <div style="margin-top: 15px;">
                 <button form="decline_form" type="submit" class="btn btn-secondary" style="margin-right: 18px;">Save</button>
