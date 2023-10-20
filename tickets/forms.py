@@ -45,13 +45,23 @@ class TicketUserUpdateForm(forms.ModelForm):
         model = Ticket
         fields = ['description', 'priority']
 
-    description = forms.CharField(label='Description', widget=forms.TextInput(
+    description = forms.CharField(label='Description', required=False, widget=forms.TextInput(
         attrs={
             'class': 'form-control',
             'placeholder': 'Please enter description',
         }
     ))
-    priority = forms.ChoiceField(choices=PRIORITY_CHOICES, widget=forms.Select(attrs=FORM_CONTROL_ATTRS))
+    priority = forms.ChoiceField(choices=PRIORITY_CHOICES, required=False, widget=forms.Select(attrs=FORM_CONTROL_ATTRS))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        description = cleaned_data.get('description')
+        priority = cleaned_data.get('priority')
+
+        if not description and not priority:
+            raise forms.ValidationError("To update should be selected at least one value.")
+
+        return cleaned_data
 
 
 class TicketDeclineForm(forms.ModelForm):

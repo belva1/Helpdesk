@@ -5,9 +5,37 @@ Register
 {% endblock %}
 
 {% block content %}
-<form id="add_form" method="POST">
-    {% csrf_token %}
-    {{ form }}
-    <button form="add_form" type="submit" class="btn btn-outline-secondary mt-4">Register</button>
-</form>
+<body style="background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+    <div style="background-color: #333; padding: 20px; border-radius: 10px; text-align: center; width: 400px; margin-bottom: 50px;">
+        <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Registration</div>
+        <form id="register_form" method="POST" style="margin: 0 auto;">
+            {% csrf_token %}
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="username" placeholder="Username" class="form-control">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="first_name" placeholder="First Name" class="form-control">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="last_name" placeholder="Last Name" class="form-control">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <input type="password" name="password" placeholder="Password" class="form-control">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <input type="password" name="confirm_password" placeholder="Confirm Password" class="form-control">
+            </div>
+            <div style="color: white;">{{ form.errors }} </div>
+            <button form="register_form" type="submit" class="btn-login" style="background-color: white; color: black; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Register</button>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'logout_view' %}" class="btn-logout" style="background-color: #8B0000; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; margin-left: 10px;">Logout</a>
+            {% endif %}
+            <div style="margin-top: 12px;">
+                <a href="{% url 'login_view' %}" style="font-size: 12px; color: white; margin-top: 12px;">Move to the login form</a>
+            </div>
+
+            <p style="color: #fff; margin-top: 10px; font-weight: bold;">Current authenticated user: {{ request.user }}</p>
+        </form>
+    </div>
+</body>
 {% endblock %}

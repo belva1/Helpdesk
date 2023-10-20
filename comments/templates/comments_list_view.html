@@ -4,29 +4,36 @@
 Comments
 {% endblock %}
 
+
 {% block content %}
-<h1>Comments for "{{ ticket.topic }}"</h1>
-
-    <a href="{% url 'ticket_detail_view' ticket.pk %}">Back to Ticket</a>
-
-    <ul>
+  <body style="background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+    <div style="background-color: #333; padding: 20px; border-radius: 10px; text-align: center; width: 400px; margin-bottom: 50px;">
+        <div style="font-size: 36px; color: white; margin-bottom: 20px; font-size: 25px; font-weight: bold;">Comments for "{{ ticket }}"</div>
+      <ul style="list-style: none; padding: 0;">
         {% for comment in comments %}
-        <li>
-            <p>{{ comment.text }}</p>
-            {% if comment.comment_user == request.user %}
-            <a href="{% url 'comment_update_view' pk=comment.pk %}">Update</a>
-            <a href="{% url 'comment_delete_view' pk=comment.pk %}">Delete</a>
-            {% endif %}
-            <p>Created by {{ comment.comment_user.username }} on {{ comment.created_date }}</p>
-            <hr>
+        <li style="margin-bottom: 20px;">
+          <p style="color: white;">{{ comment.text }}</p>
+          {% if comment.comment_user == request.user %}
+            <div style="margin-top: 10px; margin-bottom: 10px;">
+                <a href="{% url 'comment_update_view' pk=comment.pk %}" class="btn btn-secondary btn-sm" style="text-decoration: none; margin-right: 10px;">Update</a>
+                <a href="{% url 'comment_delete_view' pk=comment.pk %}" class="btn btn-danger btn-sm" style="text-decoration: none;">Delete</a>
+            </div>
+           {% endif %}
+          <p style="color: white;">Created by {{ comment.comment_user.username }} on {{ comment.created_date }}</p>
+          <hr style="border-color: white;">
         </li>
         {% empty %}
-        <p>No comments available.</p>
+        <div style="align-items: center;">
+            <p style="color: #BC8F8F; font-weight: bold; font-size: 24px; text-align: center;">&#9432; There are currently no comments in this request.</p>
+        </div>
         {% endfor %}
-    </ul>
-
-{% if ticket.status == 'InProcess' %}
-    <a href="{% url 'comment_create_view' pk=ticket.pk %}">Create Comment</a>
-{% endif %}
-
+      </ul>
+        <div>
+            {% if ticket.status == 'InProcess' %}
+            <a href="{% url 'comment_create_view' pk=ticket.pk %}" class="btn btn-secondary">Create Comment</a>
+            {% endif %}
+            <br><a href="{% url 'ticket_detail_view' ticket.pk %}" style="color: white; font-size: 12px;">&#10159; Back to the Request</a>
+        </div>
+       </div>
+  </body>
 {% endblock %}

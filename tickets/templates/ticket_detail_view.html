@@ -1,56 +1,78 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Ticket Detail
+Request Details
 {% endblock %}
 
 {% block content %}
+<body style="background-color: #222; margin: 0;">
+    <div style="background-color: #222; padding: 20px; text-align: center;">
+        <div class="card text-center" style="background-color: #333; color: white; max-width: 600px; margin: 0 auto;">
 
-<p>{{ ticket }}</p>
-<p>{{ ticket.ticket_user }}</p>
-<p>{{ ticket.priority }}</p>
-<p>{{ ticket.description }}</p>
-<p>{{ ticket.status }}</p>
+            <div class="card-header">
+                <h1 style="font-weight: bold;">{{ ticket }}</h1>
+            </div>
+            <div class="card-body" style="text-align: left;">
+                <div style="display: grid; grid-template-columns: max-content 1fr; gap: 10px;">
 
-{% if ticket.restore_request %}
-<p>Ticket is under consideration for approval/decline.</p>
-{% endif %}
+                    <div style="font-weight: bold;">User:</div>
+                    <div>{{ ticket.ticket_user }}</div>
 
-{% if ticket.status == 'Declined' or ticket.status == 'InRestoration' %}
-<p>{{ ticket.decline_reason }}</p>
-{% endif %}
+                    <div style="font-weight: bold; color: {% if ticket.priority == 'Low' %}#9ACD32{% elif ticket.priority == 'Medium' %}#F0E68C{% elif ticket.priority == 'High' %}#FF7F50{% else %}white{% endif %};">Priority:</div>
+                    <p style="color: {% if ticket.priority == 'Low' %}#9ACD32{% elif ticket.priority == 'Medium' %}#F0E68C{% elif ticket.priority == 'High' %}#FF7F50{% else %}white{% endif %};"> {{ ticket.priority }}</p>
+                    <div style="font-weight: bold;">Status:</div>
+                    <div>{{ ticket.status }}</div>
 
-{% if ticket.status == 'Declined' and request.user ==  ticket.ticket_user %}
-<a href="{% url 'ticket_restore_view' pk=ticket.id %}" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Restore ticket</a>
-{% endif %}
+                    <div style="font-weight: bold;">Description:</div>
+                    <div>{{ ticket.description }}</div>
 
+                    {% if ticket.status == 'Declined' or ticket.status == 'InRestoration' %}
+                        <div style="font-weight: bold;">Decline Reason:</div>
+                        <div>{{ ticket.decline_reason }}</div>
+                    {% endif %}
 
-{% if ticket.status == 'Active' and request.user == ticket.ticket_user %}
-<a href="{% url 'ticket_user_update_view' pk=ticket.id %}">Update ticket</a>
-{% endif %}
+                    {% if ticket.restore_request %}
+                        <div style="grid-column: span 2;">&#9432; The request is awaiting approval/decline.</div>
+                    {% endif %}
+                </div>
 
+                <div class="button-container" style="display: flex; flex-direction: row; align-items: flex-end; margin-top:10px;">
+                    {% if ticket.status == 'Declined' and request.user ==  ticket.ticket_user %}
+                        <a href="{% url 'ticket_restore_view' pk=ticket.id %}" class="btn btn-secondary">Restore ticket</a>
+                    {% endif %}
 
-{% if request.user.is_staff and ticket.status == 'InRestoration' or ticket.status == 'Active' and  request.user.is_staff %}
-<a href="{% url 'ticket_approve_view' pk=ticket.id %}">Approve</a>
-<a href="{% url 'ticket_decline_view' pk=ticket.id %}">Decline</a>
-{% endif %}
+                    {% if ticket.status == 'Active' and request.user == ticket.ticket_user %}
+                        <a href="{% url 'ticket_user_update_view' pk=ticket.id %}" class="btn btn-secondary" >Update ticket</a>
+                    {% endif %}
 
-{% if request.user.is_staff and ticket.status == 'Approved' %}
-<a href="{% url 'ticket_in_process_view' pk=ticket.id %}">Move to InProcess</a>
-{% endif %}
+                    {% if request.user.is_staff and ticket.status == 'InRestoration' or request.user.is_staff and ticket.status == 'Active' %}
+                        <a href="{% url 'ticket_approve_view' pk=ticket.id %}" class="btn btn-success">Approve</a>
+                        <a href="{% url 'ticket_decline_view' pk=ticket.id %}" class="btn btn-danger" style="btn btn-danger; margin-left: 18px;">Decline</a>
+                    {% endif %}
 
-{% if request.user.is_staff and ticket.status == 'InProcess' %}
-<a href="{% url 'ticket_done_view' pk=ticket.id %}">Move to Done</a>
-{% endif %}
+                    {% if request.user.is_staff and ticket.status == 'Approved' %}
+                        <a href="{% url 'ticket_in_process_view' pk=ticket.id %}" class="btn btn-secondary">Move to InProcess</a>
+                    {% endif %}
 
-{% if request.user.is_staff %}
-<a href="{% url 'ticket_admin_delete_view' pk=ticket.id %}">Delete</a>
-{% endif %}
+                    {% if request.user.is_staff and ticket.status == 'InProcess' %}
+                        <a href="{% url 'ticket_done_view' pk=ticket.id %}" class="btn btn-success">Move to Done</a>
+                    {% endif %}
 
-<p>{{ request.user }}</p>
-
-
-<p><a href="{% url 'comments_list_view' pk=ticket.id %}">Comments</a></p>
-
-
+                    {% if request.user.is_staff %}
+                        <a href="{% url 'ticket_admin_delete_view' pk=ticket.id %}" class="btn btn-dark" style="margin-left:18px;">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer text-body-secondary" style="text-align: left;">
+                <p style="color: white; font-size: 16px;">Created Date: {{ ticket.created_date }}</p>
+            </div>
+            <div class="card-footer text-body-secondary" style="text-align: left;">
+                <a href="{% url 'comments_list_view' pk=ticket.id %}" style="color: white; font-size: 16px;">&#10159; Comments</a>
+            </div>
+            <div class="card-footer text-body-secondary" style="text-align: left;">
+                <a href="{% url 'main_view' %}" style="color: white; font-size: 12px;">&#10159; Move to all requests</a>
+            </div>
+        </div>
+    </div>
+</body>
 {% endblock %}

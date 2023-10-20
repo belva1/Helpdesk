@@ -1,17 +1,36 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Ticket Create
+Create Request
 {% endblock %}
 
 {% block content %}
-<form id="add_form" method="POST">
-{% csrf_token %}
-{{ form.priority }}
-{{ form.topic }}
-{{ form.description }}
-{{ form.status }}
-{{ form.errors }}
- <button form="add_form" type="submit" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Create</button>
-</form>
+<body style="background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0px;">
+    <form id="add_form" method="POST" style="background-color: #333; padding: 20px; border-radius: 10px; text-align: center; width: 400px; margin-bottom: 70px;">
+        {% csrf_token %}
+        <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Create Request</div>
+
+        <div style="margin-bottom: 10px;">
+            <select name="{{ form.priority.name }}" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+                <option value="" disabled selected>Select Priority</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <textarea name="{{ form.topic.name }}" placeholder="Topic" style="width: 100%; padding: 10px; border: none; border-radius: 5px;" cols="40" rows="2"></textarea>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <textarea name="{{ form.description.name }}" placeholder="Description" style="width: 100%; padding: 10px; border: none; border-radius: 5px;" cols="40" rows="5"></textarea>
+        </div>
+
+        <div style="color: white;">{{ form.errors }} </div>
+
+        <button form="add_form" type="submit" class="btn-login" style="background-color: white; color: black; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 12px;">Create</button>
+        <div class="card-footer text-body-secondary" style="text-align: center;">
+            <a href="{% url 'main_view' %}" style="color: white; font-size: 12px;">&#10159; Move to all requests</a>
+        </div>
+    </form>
+</body>
 {% endblock %}

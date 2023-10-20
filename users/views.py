@@ -21,8 +21,6 @@ class LoginView(View):
             user = authenticate(**form.cleaned_data)
             if user is not None:
                 login(request, user)
-                # url = reverse('profile_view', kwargs={'username': user.username})
-                # return HttpResponseRedirect(url)
         return render(request, self.template_name, {'form': form})
 
 
@@ -30,7 +28,11 @@ class RegisterView(View):
     template_name = 'register_view.html'
 
     def get(self, request):
-        form = RegisterViewForm()
+        if not request.user.is_authenticated:
+            form = RegisterViewForm()
+        else:
+            url = 'login_view'
+            return HttpResponseRedirect(reverse(url))
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):

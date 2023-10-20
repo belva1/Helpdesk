@@ -5,10 +5,19 @@ Ticket Decline
 {% endblock %}
 
 {% block content %}
-<form id="add_form" method="POST">
-{% csrf_token %}
-{{ form.decline_reason }}
-{{ form.errors }}
- <button form="add_form" type="submit" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Save</button>
-</form>
+<body style="background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="background-color: #333; padding: 20px; border-radius: 10px; text-align: center; width: 400px; margin-bottom: 90px;">
+        <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Decline</div>
+        <form id="decline_form" method="POST" style="margin: 0 auto;">
+            {% csrf_token %}
+            {{ form.decline_reason }}
+            <div style="color: white;">{{ form.errors }}</div>
+            <div style="margin-top: 15px;">
+                <button form="decline_form" type="submit" class="btn btn-secondary" style="margin-right: 18px;">Save</button>
+                <a href="{% url 'ticket_detail_view' pk=ticket.pk %}" class="btn btn-dark">Cancel</a>
+            </div>
+            </form>
+    </div>
+</body>
+
 {% endblock %}

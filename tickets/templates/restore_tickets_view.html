@@ -1,11 +1,46 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Restore Tickets
+InRestoration Requests
 {% endblock %}
 
 {% block content %}
-{% for ticket_to_restore in tickets_to_restore %}
-<a href="{% url 'ticket_detail_view' pk=ticket_to_restore.ticket.pk%}">{{ ticket_to_restore }}</a>
-{% endfor %}
+<body style="background-color: #222; margin: 0;">
+    <div style="background-color: #222; padding: 20px; text-align: center;">
+        {% if tickets_to_restore %}
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+            {% for ticket in tickets_to_restore %}
+            <div style="background-color: #333; padding: 10px; border-radius: 10px; margin: 10px 0; flex-basis: calc(33.33% - 20px); box-sizing: border-box;">
+                <p style="font-size: 35px; color: white; font-weight: bold;">{{ ticket.topic }}</p>
+                <hr style="border: 1px solid white; margin: 10px 0;">
+                {% if request.user.is_staff %}
+
+                {% if ticket.status == 'Active' or ticket.status == 'InRestoration' %}
+                    <p style="color: #778899; font-weight: bold; font-size: 24px; text-align: center;">&#9432; Waiting for Approval / Decline</p>
+                    <hr style="border: 1px solid white; margin: 10px 0;">
+                {% endif %}
+
+                {% endif %}
+
+                <p style="color: {% if ticket.priority == 'Low' %}#9ACD32{% elif ticket.priority == 'Medium' %}#F0E68C{% elif ticket.priority == 'High' %}#FF7F50{% else %}white{% endif %}; font-weight: bold; text-align: left;">Priority: {{ ticket.priority }}</p>
+                <p style="color: white; text-align: left;">Status: {{ ticket.status }}</p>
+                <p style="color: white; text-align: left;">Request creation date: {{ ticket.created_date }}</p>
+                <div style="text-align: left;">
+                   <a href="{% url 'ticket_detail_view' pk=ticket.pk %}" style="color: white;">&#10159; Move to this request</a>
+                </div>
+                <div style="text-align: right;">
+                   {% if request.user.is_staff %}
+                   <a href="{% url 'ticket_admin_delete_view' pk=ticket.pk %}" class="btn btn-dark">Delete</a>
+                   {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="align-items: center;">
+            <p style="color: #BC8F8F; font-weight: bold; font-size: 24px; text-align: center;">&#9432; There are currently no "InRestoration" requests.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
 {% endblock %}

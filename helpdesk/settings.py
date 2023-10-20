@@ -34,7 +34,6 @@ LOCAL_APPS = [
     'comments',
     'tickets',
     'users',
-    'crispy_forms'
 ]
 
 DJANGO_APPS = [
@@ -65,7 +64,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'helpdesk.urls'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 TEMPLATES = [
     {

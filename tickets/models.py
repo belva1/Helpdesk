@@ -23,7 +23,7 @@ class Ticket(models.Model):
 
     ticket_user = models.ForeignKey(UM, on_delete=models.CASCADE)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Low')
-    topic = models.CharField(max_length=64, blank=False, null=False)
+    topic = models.CharField(max_length=18, blank=False, null=False)
     description = models.CharField(max_length=255, blank=False, null=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
     created_date = models.DateTimeField(auto_now_add=True)
@@ -41,4 +41,4 @@ class Ticket(models.Model):
     restore_request = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Topic - "{self.topic}"'
+        return f"{self.topic}"

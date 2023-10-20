@@ -1,11 +1,65 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Main
+List of all requests
 {% endblock %}
 
+
 {% block content %}
-{% for ticket in tickets %}
-<p><a href="{% url 'ticket_detail_view' pk=ticket.pk%}">{{ ticket }}</a></p>
-{% endfor %}
+<body style="background-color: #222; margin: 0;">
+    <div style="background-color: #222; padding: 20px; text-align: center;">
+        {% if tickets %}
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+            {% for ticket in tickets %}
+            <div style="background-color: #333; padding: 10px; border-radius: 10px; margin: 10px 0; flex-basis: calc(33.33% - 20px); box-sizing: border-box;">
+                <p style="font-size: 35px; color: white; font-weight: bold;">{{ ticket.topic }}</p>
+                <hr style="border: 1px solid white; margin: 10px 0;">
+                {% if request.user.is_staff %}
+
+                {% if ticket.status == 'Active' or ticket.status == 'InRestoration' %}
+                    <p style="color: #778899; font-weight: bold; font-size: 24px; text-align: center;">&#9432; Waiting for Approval / Decline</p>
+                    <hr style="border: 1px solid white; margin: 10px 0;">
+                {% elif ticket.status == 'Declined' %}
+                    <p style="color: #CD5C5C; font-weight: bold; font-size: 24px; text-align: center;">&#10007; Request was declined</p>
+                    <hr style="border: 1px solid white; margin: 10px 0;">
+                {% elif ticket.status == 'Done' %}
+                    <p style="color: #3CB371; font-weight: bold; font-size: 24px; text-align: center;">✓ The request has been processed</p>
+                    <hr style="border: 1px solid white; margin: 10px 0;">
+                {% else %}
+                    <p style="color: #BC8F8F; font-weight: bold; font-size: 24px; text-align: center;">&#10149; Ready to advance status</p>
+                    <hr style="border: 1px solid white; margin: 10px 0;">
+                {% endif %}
+
+                {% endif %}
+
+                <p style="color: {% if ticket.priority == 'Low' %}#9ACD32{% elif ticket.priority == 'Medium' %}#F0E68C{% elif ticket.priority == 'High' %}#FF7F50{% else %}white{% endif %}; font-weight: bold; text-align: left;">Priority: {{ ticket.priority }}</p>
+                <p style="color: white; text-align: left;">Status: {{ ticket.status }}</p>
+                <p style="color: white; text-align: left;">Request creation date: {{ ticket.created_date }}</p>
+                <div style="text-align: left;">
+                   <a href="{% url 'ticket_detail_view' pk=ticket.pk %}" style="color: white;">&#10159; Move to this request</a>
+                </div>
+                <div style="text-align: right;">
+                   {% if request.user.is_staff %}
+                   <a href="{% url 'ticket_admin_delete_view' pk=ticket.pk %}" class="btn btn-dark">Delete</a>
+                   {% elif request.user == ticket.ticket_user and ticket.status == 'Active' %}
+                   <p style="font-size: 14px; color: #DEB887; margin-top: 14px;">&#9432; NOTE <br>You can edit the request while it is “Active”.</p>
+                   {% elif request.user == ticket.ticket_user and ticket.status == 'Declined' %}
+                   <p style="font-size: 14px; color: #DEB887; margin-top: 14px;">&#9432; NOTE <br>The request was declined. There is an opportunity to do request for "Restore".</p>
+                   {% elif request.user == ticket.ticket_user and ticket.status == 'InRestoration' %}
+                   <p style="font-size: 14px; color: #DEB887; margin-top: 14px;">&#9432; NOTE <br>You have submitted a request for restoration.</p>
+                   {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="align-items: center;">
+            <p style="color: #BC8F8F; font-weight: bold; font-size: 24px; text-align: center;">&#9432; There are currently no requests.</p>
+        </div>
+        {% if not request.user.is_staff %}
+            <a href="{% url 'ticket_create_view' %}" style="color: white; font-weight: bold; font-size: 24px; text-align: center;">You can create a request by following this link</a>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
 {% endblock %}

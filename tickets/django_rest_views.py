@@ -20,8 +20,13 @@ class TicketViewSet(viewsets.ModelViewSet):
             queryset = Ticket.objects.filter(ticket_user=self.request.user)
 
         priority = self.request.query_params.get('priority')  # EXMP /?priority=Low
+        status = self.request.query_params.get('status')  # EXMP /?status=InRestoration
+
         if priority:
             queryset = queryset.filter(priority=priority).distinct()
+
+        if status:
+            queryset = queryset.filter(status=status).distinct()
 
         return queryset
 

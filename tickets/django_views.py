@@ -16,7 +16,7 @@ from .exceptions import IsNotActiveOrInRestorationTicketException, IsNotActiveTi
 from .mixins import LoginRequiredMixin
 
 
-# MAIN, IN RESTORATION, DETAIL VIEWS
+# MAIN, IN-RESTORATION, DETAIL VIEWS
 class TicketsMainView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
     """
@@ -87,10 +87,14 @@ class TicketCreateView(LoginRequiredMixin, CreateView):
     form_class = TicketCreateForm
 
     def get(self, request, **kwargs):
+        if request.user.is_staff:
+            raise Http404("Users with privileges cannot create requests.")
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, **kwargs):
+        if request.user.is_staff:
+            raise Http404("Users with privileges cannot create requests.")
         # An instance of the 'TicketCreateForm' form is created using the data
         # submitted by the user in the POST request.
         form = TicketCreateForm(request.POST)
@@ -125,29 +129,36 @@ class TicketUserUpdateView(LoginRequiredMixin, UpdateView):
                 raise IsNotActiveTicketException('You cannot edit a ticket not in Active status.')
         else:
             raise IsNotCreatorOfTicketException('You cannot restore request that you are not the creator of.')
+
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('ticket_detail_view', kwargs={'pk': self.object.pk})
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.initial['priority'] = self.object.priority
+        form.initial['description'] = self.object.description
+        return form
 
 
 # DELETE VIEW
 class TicketAdminDeleteView(LoginRequiredMixin, DeleteView):
     model = Ticket
     template_name = 'ticket_admin_delete_view.html'
+    context_object_name = 'ticket'
 
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
+    def get_object(self, queryset=None):
         ticket_id = self.kwargs.get('pk')
         try:
             ticket = self.model.objects.get(pk=ticket_id)
+            return ticket
         except Ticket.DoesNotExist:
             raise Http404('The ticket you are trying to find does not exist.')
-
-        return render(request, self.template_name)
 
     def get_success_url(self):
         return reverse('main_view')
@@ -217,7 +228,7 @@ class TicketApproveView(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse('ticket_detail_view', args=[pk]))
 
 
-# INPROCESS, DONE
+# IN-PROCESS, DONE
 class TicketInProcessView(LoginRequiredMixin, View):
     model = Ticket
 

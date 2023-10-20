@@ -5,14 +5,40 @@ Login
 {% endblock %}
 
 {% block content %}
-<form id="add_form" method="POST">
-    {% csrf_token %}
-    {{ form.username }}
-    {{ form.password }}
-    {{ form.errors }}
-    <button form="add_form" type="submit" class="btn btn-outline-secondary mt-4">Log In</button>
-    <p>{{ request.user }}</p>
-</form>
-<a class="dropdown-item" href="{% url 'logout_view' %}">Log Out</a>
+<body style="background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+    <div style="background-color: #333; padding: 20px; border-radius: 10px; text-align: center; width: 400px; margin-bottom: 50px;">
+        {% if not request.user.is_authenticated %}
+        <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Login</div>
+        {% else %}
+        <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Login as another user</div>
+        {% endif %}
+        <form id="add_form" method="POST" style="margin: 0 auto;">
+            {% csrf_token %}
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="username" placeholder="Username" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+
+            </div>
+            <div style="margin-bottom: 10px;">
+                <input type="password" name="password" placeholder="Password" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+
+            </div>
+            <div style="color: white;">{{ form.errors }} </div>
+            <button form="add_form" type="submit" class="btn-login" style="background-color: white; color: black; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 12px;">Login</button>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'logout_view' %}" class="btn-logout" style="background-color: #8B0000; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; margin-left: 10px;">Logout</a>
+            {% else %}
+            <div style="margin-top: 12px;">
+                <a href="{% url 'register_view' %}" style="font-size: 12px; color: white; margin-top: 12px;">Move to the registration form</a>
+            </div>
+            {% endif %}
+            <p style="color: #fff; margin-top: 19px; font-weight: bold;">Current authenticated user: {{ request.user }}</p>
+            {% if request.user.is_authenticated %}
+            <div class="card-footer text-body-secondary" style="text-align: center;">
+                 <a href="{% url 'main_view' %}" style="color: white; font-size: 12px;">&#10159; Move to all requests</a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</body>
 {% endblock %}
 

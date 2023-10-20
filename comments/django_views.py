@@ -43,6 +43,11 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     form_class = CommentCreateForm
     template_name = 'comment_create_view.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ticket'] = get_object_or_404(Ticket, pk=self.kwargs['pk'])
+        return context
+
     def form_valid(self, form):
         user = self.request.user
         ticket = get_object_or_404(Ticket, pk=self.kwargs['pk'])
@@ -54,7 +59,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
                 comment.ticket = ticket
                 comment.text = form.cleaned_data['text']
                 comment.save()
-
+                self.object = comment
                 return super().form_valid(form)
             else:
                 url = reverse('main_view')
@@ -63,7 +68,6 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
             raise TicketNotInProcessException("You cannot add comments to request that is not in 'InProcess' status.")
 
     def get_success_url(self):
-        # ticket = get_object_or_404(Ticket, pk=self.kwargs['pk'])
         return reverse('comments_list_view', kwargs={'pk': self.object.ticket.pk})
 
 

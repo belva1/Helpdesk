@@ -1,15 +1,44 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Ticket Update
+Update Request
 {% endblock %}
 
 {% block content %}
-<form id="add_form" method="POST">
-{% csrf_token %}
-{{ form.priority }}
-{{ form.description }}
-{{ form.errors }}
- <button form="add_form" type="submit" class="btn btn-outline-secondary mt-4" style="margin-bottom: 25px;">Update</button>
+<body style="background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0px;">
+   <form id="update_form" method="POST" style="background-color: #333; padding: 20px; border-radius: 10px; text-align: center; width: 400px; margin-bottom: 80px;">
+    {% csrf_token %}
+    <div style="font-size: 36px; color: white; margin-bottom: 35px; font-size: 25px; font-weight: bold;">Update Request</div>
+
+    {% comment %}
+    <div style="margin-bottom: 10px;">
+        <select name="{{ form.priority.name }}" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+            <option value="" disabled selected>Select Priority</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+    </div>
+    {% endcomment %}
+
+    <div style="margin-bottom: 10px;">
+        <select name="{{ form.priority.name }}" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+            <option value="" disabled selected>Select Priority</option>
+            <option value="High" {% if form.initial.priority == 'High' %}selected{% endif %}>High</option>
+            <option value="Medium" {% if form.initial.priority == 'Medium' %}selected{% endif %}>Medium</option>
+            <option value="Low" {% if form.initial.priority == 'Low' %}selected{% endif %}>Low</option>
+        </select>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <input type="text" name="{{ form.description.name }}" value="{{ form.initial.description }}" placeholder="Description" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+    </div>
+
+    <div style="color: white;">{{ form.errors }} </div>
+            <div style="margin-top: 15px;">
+                <button form="update_form" type="submit" class="btn btn-secondary" style="margin-right: 18px;" >Update</button>
+                <a href="{% url 'ticket_detail_view' pk=ticket.pk %}" class="btn btn-dark">Cancel</a>
+            </div>
 </form>
+</body>
 {% endblock %}
